@@ -15,10 +15,10 @@ class Game extends JFrame{
     }
 
     enum DirecaoBola{
-        DIAGONALSOBE_ESQUERDA,
-        DIAGONALSOBE_DIREITA,
-        DIAGONAL_DESCE_ESQUERDA,
-        DIAGONAL_DESCE_DIREITA
+        SOBE_ESQUERDA,
+        SOBE_DIREITA,
+        DESCE_ESQUERDA,
+        DESCE_DIREITA
     }
 
     //#endregion 
@@ -48,10 +48,10 @@ class Game extends JFrame{
 
     //#region "Variáveis de posição"
 
-    int posicaoXP1;
-    int posicaoXP2;
-    int posicaoXBola;
-    int posicaoYBola;
+    int posicaoYP1 = 250;
+    int posicaoYP2 = 250;
+    int posicaoXBola = 492;
+    int posicaoYBola = 292;
 
     //#endregion
 
@@ -67,13 +67,36 @@ class Game extends JFrame{
 			public void keyPressed(KeyEvent e){
 				switch(e.getKeyCode()){
 					case KeyEvent.VK_W:
+                        player1State = Direcao.SOBE;
+                        break;
 					case KeyEvent.VK_S:
+                        player1State = Direcao.DESCE;
+                        break;
 					case KeyEvent.VK_UP:
 					case KeyEvent.VK_DOWN:
 				}
 				repaint();
 		   }
 		});
+
+        Timer t = new Timer(100, new Temporizador());
+        t.start();
+    }
+
+    void atualizaGame(){
+        movimentaPlayer1();
+    }
+
+    void movimentaPlayer1(){
+        if(player1State == Direcao.SOBE){
+            posicaoYP1 -= 10;
+        }
+
+        if(player1State == Direcao.DESCE){
+            posicaoYP1 += 10;
+        }
+
+        player1State = null;
     }
 
     class Visual extends JPanel{
@@ -95,10 +118,17 @@ class Game extends JFrame{
         public void paintComponent(Graphics g){
             super.paintComponent(g);
             g.drawImage(fundo, 0, 0, getSize().width, getSize().height, this);
-            g.drawImage(player1, 5, 250, 15, 100, this);
-            g.drawImage(player2, 980, 250, 15, 100, this);
+            g.drawImage(player1, 5, posicaoYP1, 15, 100, this);
+            g.drawImage(player2, 980, posicaoYP2, 15, 100, this);
             g.drawImage(bola, 492, 292, 16, 16, this);
             Toolkit.getDefaultToolkit().sync();
         }
+    }
+
+    class Temporizador implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent ae){
+			atualizaGame();
+		}
     }
 }
