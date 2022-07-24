@@ -7,16 +7,58 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 class Game extends JFrame{
-    Visual visual = new Visual();
+    //#region "Enumeradores de controle"
+
+    enum Direcao{
+        SOBE,
+        DESCE
+    }
+
+    enum DirecaoBola{
+        DIAGONALSOBE_ESQUERDA,
+        DIAGONALSOBE_DIREITA,
+        DIAGONAL_DESCE_ESQUERDA,
+        DIAGONAL_DESCE_DIREITA
+    }
+
+    //#endregion 
+
+    //#region "Variáveis de instância"
+
+    Visual Visual = new Visual();
+
+    //#endregion
+
+    //#region "Variáveis de imagem"
+
     Image fundo;
     Image player1;
     Image player2;
     Image bola;
 
+    //#endregion
+
+    //#region "Variáveis de direção"
+
+    Direcao player1State;
+    Direcao player2State;
+    DirecaoBola bolaState;
+
+    //#endregion
+
+    //#region "Variáveis de posição"
+
+    int posicaoXP1;
+    int posicaoXP2;
+    int posicaoXBola;
+    int posicaoYBola;
+
+    //#endregion
+
     Game(){
         super("Pong");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        add(visual);
+        add(Visual);
         pack();
         setVisible(true);
 
