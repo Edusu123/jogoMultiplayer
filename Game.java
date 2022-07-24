@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -55,6 +56,12 @@ class Game extends JFrame{
 
     //#endregion
 
+    //#region "Flags"
+
+    boolean iniciaRodada = true;
+
+    //#endregion
+
     Game(){
         super("Pong");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -73,18 +80,24 @@ class Game extends JFrame{
                         player1State = Direcao.DESCE;
                         break;
 					case KeyEvent.VK_UP:
+                        player2State = Direcao.SOBE;
+                        break;
 					case KeyEvent.VK_DOWN:
+                        player2State = Direcao.DESCE;
+                        break;
 				}
 				repaint();
 		   }
 		});
 
-        Timer t = new Timer(100, new Temporizador());
+        Timer t = new Timer(25, new Temporizador());
         t.start();
     }
 
     void atualizaGame(){
         movimentaPlayer1();
+        movimentaPlayer2();
+        movimentaBola();
     }
 
     void movimentaPlayer1(){
@@ -97,6 +110,105 @@ class Game extends JFrame{
         }
 
         player1State = null;
+    }
+
+    void movimentaPlayer2(){
+        if(player2State == Direcao.SOBE){
+            posicaoYP2 -= 10;
+        }
+
+        if(player2State == Direcao.DESCE){
+            posicaoYP2 += 10;
+        }
+
+        player2State = null;
+    }
+
+    void movimentaBola(){
+        if(iniciaRodada){
+            Random randomNumber = new Random();
+            bolaState = DirecaoBola.values()[randomNumber.nextInt(4)];
+        }
+
+        if(bolaState == DirecaoBola.SOBE_ESQUERDA){
+            posicaoXBola -= 5;
+            posicaoYBola -= 5;
+        }
+
+        if(bolaState == DirecaoBola.SOBE_DIREITA){
+            posicaoXBola += 5;
+            posicaoYBola -= 5;
+        }
+
+        if(bolaState == DirecaoBola.DESCE_ESQUERDA){
+            posicaoXBola -= 5;
+            posicaoYBola += 5;
+        }
+
+        if(bolaState == DirecaoBola.DESCE_DIREITA){
+            posicaoXBola += 5;
+            posicaoYBola += 5;
+        }
+
+        if(posicaoYBola == 2 && bolaState == DirecaoBola.SOBE_DIREITA){
+            bolaState = DirecaoBola.DESCE_DIREITA;
+        }
+        
+        if(posicaoYBola == 2 && bolaState == DirecaoBola.SOBE_ESQUERDA){
+            bolaState = DirecaoBola.DESCE_ESQUERDA;
+        }
+
+        if(posicaoYBola == 582 && bolaState == DirecaoBola.DESCE_DIREITA){
+            bolaState = DirecaoBola.SOBE_DIREITA;
+        }
+
+        if(posicaoYBola == 582 && bolaState == DirecaoBola.DESCE_ESQUERDA){
+            bolaState = DirecaoBola.SOBE_ESQUERDA;
+        }
+
+        // está no lado esquerdo pronto para bater com o player
+        if(posicaoXBola <= 20){
+            // caso esteja batendo no jogador
+            if(posicaoYBola >= posicaoYP1 && posicaoYBola <= posicaoYP1 + 100){
+                // esteja subindo
+                if(bolaState == DirecaoBola.SOBE_ESQUERDA){
+                    bolaState = DirecaoBola.SOBE_DIREITA;
+                }
+
+                // esteja descendo
+                if(bolaState == DirecaoBola.DESCE_ESQUERDA){
+                    bolaState = DirecaoBola.DESCE_DIREITA;
+                }
+            }
+        }
+
+        // ponto para o jogador 2
+        if(posicaoXBola <= 0){
+
+        }
+
+        // está no lado direito pronto para bater com o player 2
+        if(posicaoXBola >= 940 ){
+            // caso esteja batendo no jogador
+            if(posicaoYBola >= posicaoYP2 && posicaoYBola <= posicaoYP2 + 100){
+                // esteja subindo
+                if(bolaState == DirecaoBola.SOBE_DIREITA){
+                    bolaState = DirecaoBola.SOBE_ESQUERDA;
+                }
+
+                // esteja descendo
+                if(bolaState == DirecaoBola.DESCE_DIREITA){
+                    bolaState = DirecaoBola.DESCE_ESQUERDA;
+                }
+            }
+        }
+
+        if(posicaoXBola >= 940){
+            
+        }
+
+        iniciaRodada = false;
+        repaint();
     }
 
     class Visual extends JPanel{
@@ -120,7 +232,7 @@ class Game extends JFrame{
             g.drawImage(fundo, 0, 0, getSize().width, getSize().height, this);
             g.drawImage(player1, 5, posicaoYP1, 15, 100, this);
             g.drawImage(player2, 980, posicaoYP2, 15, 100, this);
-            g.drawImage(bola, 492, 292, 16, 16, this);
+            g.drawImage(bola, posicaoXBola, posicaoYBola, 16, 16, this);
             Toolkit.getDefaultToolkit().sync();
         }
     }
