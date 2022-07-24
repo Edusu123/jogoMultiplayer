@@ -55,6 +55,7 @@ class Game extends JFrame{
             g.drawImage(fundo, 0, 0, getSize().width, getSize().height, this);
             g.drawImage(player1, 5, 250, 15, 100, this);
             g.drawImage(player2, 980, 250, 15, 100, this);
+            g.drawImage(bola, 492, 292, 16, 16, this);
             Toolkit.getDefaultToolkit().sync();
         }
     }
