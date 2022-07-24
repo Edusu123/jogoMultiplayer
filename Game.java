@@ -36,6 +36,7 @@ class Game extends JFrame{
     Image player1;
     Image player2;
     Image bola;
+    Image zero, um, dois, tres, quatro, cinco;
 
     //#endregion
 
@@ -62,9 +63,19 @@ class Game extends JFrame{
 
     //#endregion
 
+    //#region "Placar"
+
+    int pontosPLayer1 = 0;
+    int pontosPLayer2 = 0;
+
+    //#endregion
+
+    Timer tempor;
+
     Game(){
         super("Pong");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
         add(Visual);
         pack();
         setVisible(true);
@@ -90,8 +101,8 @@ class Game extends JFrame{
 		   }
 		});
 
-        Timer t = new Timer(25, new Temporizador());
-        t.start();
+        tempor = new Timer(25, new Temporizador());
+        tempor.start();
     }
 
     void atualizaGame(){
@@ -184,7 +195,10 @@ class Game extends JFrame{
 
         // ponto para o jogador 2
         if(posicaoXBola <= 0){
-
+            pontosPLayer2++;
+            iniciaRodada = true;
+            posicaoXBola = 492;
+            posicaoYBola = 292;
         }
 
         // está no lado direito pronto para bater com o player 2
@@ -203,8 +217,11 @@ class Game extends JFrame{
             }
         }
 
-        if(posicaoXBola >= 940){
-            
+        if(posicaoXBola >= 1000){
+            pontosPLayer1++;
+            iniciaRodada = true;
+            posicaoXBola = 492;
+            posicaoYBola = 292;
         }
 
         iniciaRodada = false;
@@ -219,6 +236,12 @@ class Game extends JFrame{
                 player1 = ImageIO.read(new File("media/p1.png"));
                 player2 = ImageIO.read(new File("media/p2.png"));
                 bola = ImageIO.read(new File("media/bola.png"));
+                zero = ImageIO.read(new File("media/0.png"));
+                um = ImageIO.read(new File("media/1.png"));
+                dois = ImageIO.read(new File("media/2.png"));
+                tres = ImageIO.read(new File("media/3.png"));
+                quatro = ImageIO.read(new File("media/4.png"));
+                cinco = ImageIO.read(new File("media/5.png"));
             }
             catch(IOException ex){
                 JOptionPane.showMessageDialog(this, "A imagem não pode ser carregada!\n" + ex, "Erro", JOptionPane.ERROR_MESSAGE);
@@ -230,10 +253,63 @@ class Game extends JFrame{
         public void paintComponent(Graphics g){
             super.paintComponent(g);
             g.drawImage(fundo, 0, 0, getSize().width, getSize().height, this);
+
+            switch(pontosPLayer1){
+                case 0:
+                    g.drawImage(zero, 200, 100, 50, 50, this);
+                    break;
+                case 1:
+                    g.drawImage(um, 200, 100, 50, 50, this);
+                    break;
+                case 2:
+                    g.drawImage(dois, 200, 100, 50, 50, this);
+                    break;
+                case 3:
+                    g.drawImage(tres, 200, 100, 50, 50, this);
+                    break;
+                case 4:
+                    g.drawImage(quatro, 200, 100, 50, 50, this);
+                    break;
+            }
+
+            switch(pontosPLayer2){
+                case 0:
+                    g.drawImage(zero, 700, 100, 50, 50, this);
+                    break;
+                case 1:
+                    g.drawImage(um, 700, 100, 50, 50, this);
+                    break;
+                case 2:
+                    g.drawImage(dois, 700, 100, 50, 50, this);
+                    break;
+                case 3:
+                    g.drawImage(tres, 700, 100, 50, 50, this);
+                    break;
+                case 4:
+                    g.drawImage(quatro, 700, 100, 50, 50, this);
+                    break;
+            }
+
             g.drawImage(player1, 5, posicaoYP1, 15, 100, this);
             g.drawImage(player2, 980, posicaoYP2, 15, 100, this);
             g.drawImage(bola, posicaoXBola, posicaoYBola, 16, 16, this);
             Toolkit.getDefaultToolkit().sync();
+
+            if(pontosPLayer1 >= 5){
+                tempor.stop();
+                g.drawImage(cinco, 200, 100, 50, 50, this);
+                super.paintComponent(g);
+                JOptionPane.showMessageDialog(this, "O jogador 1 ganhou!!");
+                System.exit(1);
+            }
+
+            if(pontosPLayer2 >= 5){
+                tempor.stop();
+                g.drawImage(cinco, 700, 100, 50, 50, this);
+                super.paintComponent(g);
+                JOptionPane.showMessageDialog(this, "O jogador 2 ganhou!!");
+                System.exit(1);
+            }
         }
     }
 
